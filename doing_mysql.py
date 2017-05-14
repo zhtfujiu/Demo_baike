@@ -20,9 +20,8 @@ class Doing_mysql(object):
         return self.cur.execute(sql)
 
     # 创建个人表
-    def do_create_table(self, username):
+    def do_create_info_table(self, username):
         # 首先检测数据库中是否存在该username的table
-        print 'username: ',username
         sql_check = 'SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_SCHEMA=\'baike\' AND TABLE_NAME="' +unicode(username, 'utf-8')+'";'
         if self.cur.execute(sql_check)==0:
             # 证明不存在该表
@@ -31,6 +30,20 @@ class Doing_mysql(object):
             self.conn.commit()
         else:
             # 存在该表，不用新建表格
+            return
+
+    # 创建爬取列表，已词条命名
+    def do_create_entry_table(self, entry):
+        sql_check = 'SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_SCHEMA=\'baike\' AND TABLE_NAME="' +unicode(entry, 'utf-8')+'";'
+        if self.cur.execute(sql_check)==0:
+            # 证明不存在该表
+            sql = 'CREATE TABLE ' + entry + ' (name CHAR(100) PRIMARY KEY,url TEXT, abscract TEXT);'
+            self.cur.execute(sql)
+            self.conn.commit()
+            print '已为您与baike数据库中创建', entry, '数据表。'
+        else:
+            # 存在该表，不用新建表格
+            print '您的baike数据库中已有', entry, '数据表。'
             return
 
     # 更新个人信息至百度百科个人账号表
@@ -42,8 +55,11 @@ class Doing_mysql(object):
         self.cur.execute(sql,(username, user_pic_url, user_level, tongguo, youzhi, tese, tijiao, tongguolv, chuangjian, caifuzhi))
         self.conn.commit()
 
+    # 更新爬取信息至该词条table
+    def do_add_entrydata(self, entry, name, url, abscract):
+        sql = 'insert into '+entry+' (name, url, abscract) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE name=name, url=url, abscract=abscract;'
+        self.cur.execute(sql, (name, url, abscract))
+        self.conn.commit()
     def do_end_sql(self):
         self.cur.close()
         self.conn.close()
-
-# Error : You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''伏久飞天', 'http://wwww', 1, 0 ,0 ,0 ,0 ,0 ,0,0) VALUES (%s, %s, %s, %s, %s' at line 1
