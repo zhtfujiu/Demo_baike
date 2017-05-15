@@ -63,11 +63,12 @@ class Doing_Database(object):
             while True:
                 self.entry = raw_input('请输入要操作的根词条（即要操作的数据表名称）：\n')
                 if self.doing_mysql.do_check_is_in(self.entry):
-                    # 返回真，证明存在这个词条
-                    break
-                else:
+                    # 返回真，证明不存在这个词条
                     print '本词条不存在'
                     continue
+                else:
+                    # 返回假，证明存在，跳出
+                    break
 
         except Exception, e:
             print e
