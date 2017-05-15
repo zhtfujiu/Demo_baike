@@ -20,20 +20,23 @@ class Doing_mysql(object):
     def do_check_is_in(self, tablename):
         sql_check = 'SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_SCHEMA=\'baike\' AND TABLE_NAME="' + unicode(
             tablename, 'utf-8') + '";'
-        # 返回TRUE则证明存在，FALSE则不存在该表
-        return self.cur.execute(sql_check) != 0
+        # 返回TRUE则证明不存在，FALSE则存在该表
+        # print self.cur.execute(sql_check) == 0
+        return self.cur.execute(sql_check) == 0
 
     # 创建个人表
     def do_create_info_table(self, username):
         # 首先检测数据库中是否存在该username的table
         if self.do_check_is_in(username):
-            # 证明不存在该表
+            # 不存在该表，新建表格
             sql = 'CREATE TABLE ' + username + ' (百度账号 CHAR(10) PRIMARY KEY,头像图片链接 CHAR(200), 百科等级 CHAR(3), 通过版本 CHAR(3), 优质版本 CHAR(3), 特色词条 CHAR(3), 提交版本 CHAR(3), 通过率 CHAR(3), 创建版本 CHAR(3), 财富值 CHAR(3));'
             self.cur.execute(sql)
             self.conn.commit()
+
         else:
-            # 存在该表，不用新建表格
+            # 证明存在该表
             return
+
 
     # 创建爬取列表，以词条命名
     def do_create_entry_table(self, entry):

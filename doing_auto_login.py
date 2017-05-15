@@ -56,6 +56,7 @@ class Doing_Auto_login(object):
         try:
             # 转到个人百科页面
             self.driver.get('https://baike.baidu.com/usercenter')
+            time.sleep(2)
             # 创建个人数据表，以username为table名称来
             doing_mysql = Doing_mysql()
             doing_mysql.do_create_info_table(self.username)
@@ -84,5 +85,5 @@ class Doing_Auto_login(object):
             # 关闭数据库
             doing_mysql.do_end_sql()
         except Exception, e:
-            print '获取并存储个人信息时发生错误：', e.message
+            print '获取并存储个人信息时发生错误：', e
 
