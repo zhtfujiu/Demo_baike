@@ -3,7 +3,7 @@
 import time
 from doing_mysql import Doing_mysql
 
-class Auto_login_baidu(object):
+class Doing_Auto_login(object):
     def __init__(self, driver):
         self.driver = driver
 
@@ -50,7 +50,7 @@ class Auto_login_baidu(object):
 
                     break
         except Exception, e:
-            print '登录过程发生错误：', e.message
+            print '登录过程发生错误：', e
 
     def get_user_baike_info(self):
         try:

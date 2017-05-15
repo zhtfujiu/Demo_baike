@@ -3,7 +3,7 @@
 # 爬虫入口
 import html_outputer, url_manager, html_downloader, html_parser
 
-class SpiderMain(object):
+class Doing_Spider(object):
 
     def __init__(self):
         self.urls = url_manager.UrlManager()
@@ -48,6 +48,7 @@ class SpiderMain(object):
 
                     except:
                         print '本条爬取失败'
+                print num, '条数据已爬取完成'
 
                 try:
                     self.outputer.output_mysql()
@@ -59,14 +60,3 @@ class SpiderMain(object):
             else:
 
                 print '您输入的词条不存在，请重新输入'
-
-
-
-
-
-# if __name__=='__main__':
-#     root_url = 'http://baike.baidu.com/item/Python' # 入口URL
-#     obj_spider = SpiderMain()
-#     obj_spider.crawl(root_url)
-
-

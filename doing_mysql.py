@@ -1,7 +1,7 @@
 # coding=UTF-8
 # 执行数据库的相关操作
 
-import pymysql
+import pymysql, xlwt
 
 class Doing_mysql(object):
 
@@ -11,19 +11,24 @@ class Doing_mysql(object):
         # self.cur.execute('USE baike')  # 后面修改成自动创建数据表
         print '数据库已连接'
 
-    def do_reset_mysql(self, table_name, sql, values):# 对数据进行更近或增加操作
-        self.cur.execute('USE '+table_name)
-        self.cur.execute(sql, values) # 执行相应的SQL语句，对应数据更新进数据库
-        self.conn.commit()
 
+    # 执行查询SQL
     def do_select_mysql(self, sql):
         return self.cur.execute(sql)
+
+    # 查询是否存在某某表
+    def do_check_is_in(self, tablename):
+        sql_check = 'SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_SCHEMA=\'baike\' AND TABLE_NAME="' + unicode(
+            tablename, 'utf-8') + '";'
+        # 返回TRUE则证明存在，FALSE则不存在该表
+        return self.cur.execute(sql_check) != 0
 
     # 创建个人表
     def do_create_info_table(self, username):
         # 首先检测数据库中是否存在该username的table
-        sql_check = 'SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_SCHEMA=\'baike\' AND TABLE_NAME="' +unicode(username, 'utf-8')+'";'
-        if self.cur.execute(sql_check)==0:
+        # sql_check = 'SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_SCHEMA=\'baike\' AND TABLE_NAME="' +unicode(username, 'utf-8')+'";'
+        # if self.cur.execute(sql_check)==0:
+        if self.do_check_is_in(username):
             # 证明不存在该表
             sql = 'CREATE TABLE ' + username + ' (百度账号 CHAR(10) PRIMARY KEY,头像图片链接 CHAR(200), 百科等级 CHAR(3), 通过版本 CHAR(3), 优质版本 CHAR(3), 特色词条 CHAR(3), 提交版本 CHAR(3), 通过率 CHAR(3), 创建版本 CHAR(3), 财富值 CHAR(3));'
             self.cur.execute(sql)
@@ -32,10 +37,11 @@ class Doing_mysql(object):
             # 存在该表，不用新建表格
             return
 
-    # 创建爬取列表，已词条命名
+    # 创建爬取列表，以词条命名
     def do_create_entry_table(self, entry):
-        sql_check = 'SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_SCHEMA=\'baike\' AND TABLE_NAME="' +unicode(entry, 'utf-8')+'";'
-        if self.cur.execute(sql_check)==0:
+        # sql_check = 'SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_SCHEMA=\'baike\' AND TABLE_NAME="' +unicode(entry, 'utf-8')+'";'
+        # if self.cur.execute(sql_check)==0:
+        if self.do_check_is_in(entry):
             # 证明不存在该表
             sql = 'CREATE TABLE ' + entry + ' (name CHAR(100) PRIMARY KEY,url TEXT, abscract TEXT);'
             self.cur.execute(sql)
@@ -60,6 +66,36 @@ class Doing_mysql(object):
         sql = 'insert into '+entry+' (name, url, abscract) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE name=name, url=url, abscract=abscract;'
         self.cur.execute(sql, (name, url, abscract))
         self.conn.commit()
+
+    # 导出至Excel
+    def do_ecport2excel(self, tablename):
+        count = self.cur.execute('select * from '+unicode(tablename, 'utf-8'))
+        # 重置游标位置
+        self.cur.scroll(0, mode='absolute')
+        results = self.cur.fetchall()
+
+        # 获取MYSQL里面的数据字段名称
+        fields = self.cur.description
+        workbook = xlwt.Workbook()
+        sheet = workbook.add_sheet('sheet1', cell_overwrite_ok=True)
+
+        # 写上字段信息
+        for field in range(0, len(fields)):
+            sheet.write(0, field, fields[field][0])
+
+        # 获取并写入数据段信息
+        row = 1
+        col = 0
+        for row in range(1, len(results) + 1):
+            for col in range(0, len(fields)):
+                sheet.write(row, col, u'%s' % results[row - 1][col])
+
+        workbook.save(r'./'+unicode(tablename, 'utf-8')+'.xlsx')
+
+        print '导出Excel文件成功，请前往项目根目录查看'
+
+
+    # 关闭数据库连接
     def do_end_sql(self):
         self.cur.close()
         self.conn.close()

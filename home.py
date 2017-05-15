@@ -1,8 +1,9 @@
 # coding=UTF-8
 import os
-from spider import SpiderMain
+from doing_spider import Doing_Spider
 from selenium import webdriver
-from auto_login_baidu import Auto_login_baidu
+from doing_auto_login import Doing_Auto_login
+from doing_database import Doing_Database
 
 
 
@@ -11,7 +12,7 @@ print '=====Python爬虫系统及数据分析系统（以百度百科为例）==
       '功能List：\n' \
       '1、登录个人账号查询个人百科账号信息\n' \
       '2、自定词条并爬取若干条与其相关词条、URL和摘要信息\n' \
-      '3、自定SQL语句对已爬取数据进行筛选、提取等操作\n' \
+      '3、对已爬取数据进行筛选、提取、导出等操作\n' \
       '4、退出系统\n' \
       '\n' \
       '===================================================' \
@@ -29,7 +30,7 @@ while True:
     if order == 1:
         # 执行登录功能
         # 实例化Auto_login_baidu类
-        auto_login = Auto_login_baidu(driver)
+        auto_login = Doing_Auto_login(driver)
         auto_login.login()
         # 后续爬取个人信息未完成
         auto_login.get_user_baike_info()
@@ -37,11 +38,13 @@ while True:
 
     elif order == 2:
         # 执行查询词条操作
-        spider = SpiderMain()
+        spider = Doing_Spider()
         spider.crawl(driver)
 
     elif order == 3:
-        # 执行sql语句二次开发
+        # 执行数据分析功能
+        doing_database = Doing_Database()
+        doing_database.do_database()
         pass
     elif order == 4:
         # 系统退出，浏览器退出
