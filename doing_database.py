@@ -76,13 +76,26 @@ class Doing_Database(object):
     # 导出功能
     def do_export(self):
         self.doing_mysql.do_ecport2excel(self.entry)
-        pass
-
 
     # 自定义SQL语句功能
     def do_DIY_sql(self):
         print '本功能为用户提供SQL语言接口，请严格按照MySQL数据库语法输入，否则无法得到预期结果！'
+        sql = raw_input('请输入合法SQL语句：\n')
+        try:
+            self.doing_mysql.cur.execute(sql)
+            # 打印结果
+            results = self.doing_mysql.cur.fetchall()
+            # print results
+            # 获取MYSQL里面的数据字段名称
+            fields = self.doing_mysql.cur.description
+            # 获取并写入数据段信息
+            for row in range(1, len(results) + 1):
+                print '\n'
+                for col in range(0, len(fields)):
+                    print u'%s' % results[row - 1][col], '\t'
 
+        except Exception, e:
+            print '发生错误：',e
 
 
     # 筛选栏目名称
@@ -98,7 +111,7 @@ class Doing_Database(object):
         for field in range(0, len(fields)):
             print field, fields[field][0]
         # 获取用户选择
-        columns1 = raw_input('请输入要选择的栏目标号，以空格间隔，换行结尾：').split(' ')
+        columns1 = raw_input('请输入要选择的栏目标号，以空格间隔，换行结尾：\n').split(' ')
         columns2 = []
         # 把index记录进去
         for column in columns1:
