@@ -1,7 +1,7 @@
 # coding=UTF-8
 # 执行数据库的相关操作
 
-import pymysql, xlwt, xlsxwriter
+import pymysql, xlsxwriter
 
 class Doing_mysql(object):
 
@@ -26,8 +26,6 @@ class Doing_mysql(object):
     # 创建个人表
     def do_create_info_table(self, username):
         # 首先检测数据库中是否存在该username的table
-        # sql_check = 'SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_SCHEMA=\'baike\' AND TABLE_NAME="' +unicode(username, 'utf-8')+'";'
-        # if self.cur.execute(sql_check)==0:
         if self.do_check_is_in(username):
             # 证明不存在该表
             sql = 'CREATE TABLE ' + username + ' (百度账号 CHAR(10) PRIMARY KEY,头像图片链接 CHAR(200), 百科等级 CHAR(3), 通过版本 CHAR(3), 优质版本 CHAR(3), 特色词条 CHAR(3), 提交版本 CHAR(3), 通过率 CHAR(3), 创建版本 CHAR(3), 财富值 CHAR(3));'
@@ -39,8 +37,6 @@ class Doing_mysql(object):
 
     # 创建爬取列表，以词条命名
     def do_create_entry_table(self, entry):
-        # sql_check = 'SELECT TABLE_NAME FROM information_schema.`TABLES` WHERE TABLE_SCHEMA=\'baike\' AND TABLE_NAME="' +unicode(entry, 'utf-8')+'";'
-        # if self.cur.execute(sql_check)==0:
         if self.do_check_is_in(entry):
             # 证明不存在该表
             sql = 'CREATE TABLE ' + entry + ' (name CHAR(100) PRIMARY KEY,url TEXT, abscract TEXT);'
@@ -84,8 +80,6 @@ class Doing_mysql(object):
             sheet.write(0, field, fields[field][0])
 
         # 获取并写入数据段信息
-        row = 1
-        col = 0
         for row in range(1, len(results) + 1):
             for col in range(0, len(fields)):
                 sheet.write(row, col, u'%s' % results[row - 1][col])

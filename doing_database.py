@@ -10,12 +10,6 @@
 4、SQL语句接口，提供查询操作
 '''
 
-# import xlrd
-#
-# workbook = xlrd.open_workbook('file1.xlsx')
-# print workbook.sheet_names()[0].encode('utf-8')
-
-import pymysql
 from doing_mysql import Doing_mysql
 
 
@@ -81,9 +75,7 @@ class Doing_Database(object):
 
     # 导出功能
     def do_export(self):
-        # data = self.doing_mysql.do_select_mysql('select * from '+unicode(self.entry, 'utf-8'))
         self.doing_mysql.do_ecport2excel(self.entry)
-
         pass
 
 
@@ -93,10 +85,37 @@ class Doing_Database(object):
 
 
 
-
     # 筛选栏目名称
     def do_select_title(self):
 
-        pass
+        self.doing_mysql.cur.execute('select * from ' + unicode(self.entry, 'utf-8'))
+        # 重置游标位置
+        self.doing_mysql.cur.scroll(0, mode='absolute')
+        # 获取MYSQL里面的数据字段名称
+        fields = self.doing_mysql.cur.description
+        # 打印字段信息
+        print '以下是本表的栏目头：'
+        for field in range(0, len(fields)):
+            print field, fields[field][0]
+        # 获取用户选择
+        columns1 = raw_input('请输入要选择的栏目标号，以空格间隔，换行结尾：').split(' ')
+        columns2 = []
+        # 把index记录进去
+        for column in columns1:
+            columns2.append(int(column))
 
+        sql = 'select '
+        for num in range(0, len(columns2)):
+            if num < len(columns2)-1:
+                sql = sql + u'%s' % fields[columns2[num]][0] + ', '
+            else:
+                sql = sql + u'%s' % fields[columns2[num]][0] + ' FROM ' + unicode(self.entry, 'utf-8')
 
+        # print sql
+        self.doing_mysql.cur.execute(sql)
+        results = self.doing_mysql.cur.fetchall()
+        # 获取并写入数据段信息
+        for row in range(1, len(results) + 1):
+            print '\n'
+            for col in range(0, len(columns2)):
+                print u'%s' % results[row - 1][col],'\t'
