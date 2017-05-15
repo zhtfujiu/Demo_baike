@@ -1,7 +1,7 @@
 # coding=UTF-8
 # 执行数据库的相关操作
 
-import pymysql, xlwt
+import pymysql, xlwt, xlsxwriter
 
 class Doing_mysql(object):
 
@@ -69,15 +69,15 @@ class Doing_mysql(object):
 
     # 导出至Excel
     def do_ecport2excel(self, tablename):
-        count = self.cur.execute('select * from '+unicode(tablename, 'utf-8'))
+        self.cur.execute('select * from '+unicode(tablename, 'utf-8'))
         # 重置游标位置
         self.cur.scroll(0, mode='absolute')
         results = self.cur.fetchall()
 
         # 获取MYSQL里面的数据字段名称
         fields = self.cur.description
-        workbook = xlwt.Workbook()
-        sheet = workbook.add_sheet('sheet1', cell_overwrite_ok=True)
+        workbook = xlsxwriter.Workbook(unicode(tablename, 'utf-8')+'.xlsx')
+        sheet = workbook.add_worksheet()
 
         # 写上字段信息
         for field in range(0, len(fields)):
@@ -90,8 +90,7 @@ class Doing_mysql(object):
             for col in range(0, len(fields)):
                 sheet.write(row, col, u'%s' % results[row - 1][col])
 
-        workbook.save(r'./'+unicode(tablename, 'utf-8')+'.xlsx')
-
+        workbook.close()
         print '导出Excel文件成功，请前往项目根目录查看'
 
 

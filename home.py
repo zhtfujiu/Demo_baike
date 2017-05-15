@@ -21,7 +21,7 @@ print '=====Python爬虫系统及数据分析系统（以百度百科为例）==
 driver = webdriver.Chrome()
 
 while True:
-    order = raw_input('\n\n========请输入要执行的功能序号：=========\n').strip()  # 去除前后空格
+    order = raw_input('\n========请输入要执行的功能序号：=========\n').strip()  # 去除前后空格
     if not order.isdigit():
         # 非法数据，重新输入
         print '*****请输入合法序号！*****'
@@ -49,6 +49,7 @@ while True:
     elif order == 4:
         # 系统退出，浏览器退出
         driver.quit()
+        print '\nBye~'
         os._exit(0)
     else:
         # 非法数据，重新输入

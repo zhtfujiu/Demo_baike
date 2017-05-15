@@ -26,7 +26,7 @@ class Doing_Database(object):
 
     def do_database(self):
         print '=====数据分析子功能List：=====\n\n' \
-              '1、导出词条的相关数据SQL文件、Excel文件\n' \
+              '1、导出词条的相关数据的Excel文件\n' \
               '2、二次开发接口（自定义SQL语句）\n' \
               '3、数据栏目筛选展示\n' \
               '4、返回上层菜单'
