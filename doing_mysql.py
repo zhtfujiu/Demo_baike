@@ -75,7 +75,7 @@ class Doing_mysql(object):
 
         # 获取MYSQL里面的数据字段名称
         fields = self.cur.description
-        workbook = xlsxwriter.Workbook(unicode(tablename, 'utf-8')+'.xlsx')
+        workbook = xlsxwriter.Workbook('/Users/fujiu/Desktop/' + unicode(tablename, 'utf-8')+'.xlsx')
         sheet = workbook.add_worksheet()
 
         # 写上字段信息
@@ -88,7 +88,7 @@ class Doing_mysql(object):
                 sheet.write(row, col, u'%s' % results[row - 1][col])
 
         workbook.close()
-        print '导出Excel文件成功，请前往项目根目录查看'
+        print '导出Excel文件成功，请前往电脑桌面查看'
 
 
     # 关闭数据库连接
